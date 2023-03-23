@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
-//import { usersRouter } from '../src/routes/usersHandler.js';
+import { usersRouter } from '../src/routes/usersHandler.js';
 import { activitiesRouter } from '../src/routes/activitiesHandler.js';
 
 dotenv.config();
@@ -14,8 +14,8 @@ mongoose.connect(connectionString);
 
 app.use(express.json());
 
-//app.use('/users', usersRouter(mongoose.connection));
-app.use('/activity', activitiesRouter(mongoose.connection));
+app.use('/users', usersRouter);
+app.use('/activities', activitiesRouter);
 
 app.listen(port, () => {
   console.log(`Web server running on port ${port}`);
