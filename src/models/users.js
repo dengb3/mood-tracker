@@ -9,8 +9,8 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String, // specify password field as a string
     required: true
-  }
+  },
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
 });
 
 export const UserModel = mongoose.model('User', userSchema);
-
