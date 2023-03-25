@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const activitySchema = new mongoose.Schema({
-  activity_name: { type: String, required: true },
+  activityName: { type: String, required: true },
   createdOn: {
     type: Date,
     immutable: true,
