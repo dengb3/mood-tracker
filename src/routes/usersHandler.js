@@ -8,7 +8,7 @@ import { auth } from '../middleware/auth.js';
 import { UserModel } from '../models/users.js';
 export const usersRouter = express.Router();
 
-usersRouter.post('/create', async (req, res) => {
+usersRouter.post('/signup', async (req, res) => {
   const newUser = new UserModel({
     userName: req.body.userName,
     password: req.body.password,
@@ -100,18 +100,25 @@ usersRouter.get('/me', auth, async (req, res) => {
 });
  
 
-  usersRouter.delete('/del/:userName', async (req, res, next) => {
-    await UserModel.deleteOne({userName: req.params.userName}).then(
-      () => {
-        res.status(200).json({
-          message: `user has been deleted!`
-        });
-      }
-    ).catch(
-      (error) => {
-        res.status(400).json({
-          error: error
-        });
-      }
-    );
-  });
+usersRouter.delete('/:userName', auth, async (req, res, next) => {
+  try {
+    // Check if the user being deleted matches the currently authenticated user
+    if (req.user.userName !== req.params.userName) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Delete the user
+    const result = await UserModel.deleteOne({ userName: req.params.userName });
+
+    // Check if the user was deleted successfully
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({
+      message: 'User has been deleted!'
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
