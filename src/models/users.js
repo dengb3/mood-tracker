@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PostModel } from "./post.js";
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -10,7 +11,7 @@ const userSchema = new mongoose.Schema({
     type: String, // specify password field as a string
     required: true
   },
-  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: PostModel }],
 });
 
 export const UserModel = mongoose.model('User', userSchema);
