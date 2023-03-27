@@ -1,14 +1,15 @@
 import express from 'express';
-import { ActivityModel, Post, User } from '../models/activities.js';
+import { ActivityModel } from '../models/activities.js';
 import { UserModel } from '../models/users.js';
 import { auth } from '../middleware/auth.js';
+import { PostModel } from '../models/post.js';
 
 
 const activitiesRouter = express.Router();
 
 activitiesRouter.post('/:userName', async (req, res) => {
   try {
-    const user = await User.findOne({ userName: req.params.userName }).populate('posts');
+    const user = await UserModel.findOne({ userName: req.params.userName }).populate('posts');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -16,7 +17,7 @@ activitiesRouter.post('/:userName', async (req, res) => {
       activityName: req.body.activityName,
       user: user._id, // Add reference to user ID
     });
-    const postOne = await Post.create({
+    const postOne = await PostModel.create({
       user: user._id,
     });
     await activity.save();

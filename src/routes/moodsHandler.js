@@ -1,19 +1,23 @@
 import express from 'express';
 import { MoodModel } from '../models/moods.js';
-// import { ActivityModel } from '../models/activities.js';
+import { UserModel } from '../models/users.js';
+import { ActivityModel } from '../models/activities.js';
 import { auth } from '../middleware/auth.js';
+import { PostModel } from '../models/post.js';
 
 
 const moodsRouter = express.Router();
 
 moodsRouter.post('/:activityId', auth, async (req, res) => {
   try {
-    const activity = await ActivityModel.findById(req.params.activityId);
+    const activity = await ActivityModel.findById(req.params.activityId)
+    console.log(activity)
     if (!activity) {
       return res.status(404).json({ message: 'Activity not found' });
     }
     const mood = new MoodModel({
-      activity: activity._id, // Add reference to activity ID
+      activity: activity.activityId, // Add reference to activity ID
+      user: req.user._id, // Add reference to user ID from auth middleware
       happy: req.body.happy,
       easy: req.body.easy,
       concentration: req.body.concentration,
@@ -23,8 +27,9 @@ moodsRouter.post('/:activityId', auth, async (req, res) => {
       clarity: req.body.clarity,
       refreshed: req.body.refreshed,
     });
-    const postOne = await Post.create({
-      activity: req.activityId, // Add reference to activity ID from auth middleware
+    const postOne = await PostModel.create({
+      activity: activity.activityId, // Add reference to activity ID from auth middleware
+      user: req.user._id, // Add reference to user ID from auth middleware
     });
     await mood.save();
     res.status(201).json({
@@ -40,5 +45,38 @@ moodsRouter.post('/:activityId', auth, async (req, res) => {
     });
   }
 });
+
+moodsRouter.get('/:userName', async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ userName: req.params.userName });
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const moods = await MoodModel.find({ user: user._id });
+    res.json(moods);
+  } catch (e) {
+    console.log(e)
+    res.send({ message: 'Error in fetching moods' });
+  }
+});
+
+moodsRouter.delete('/:activityId', auth, async (req, res, next) => {
+  try {
+    const mood = await MoodModel.findOne({ _id: req.params.activityId }).populate('user');
+    console.log(mood)
+    if (!mood) {
+      return res.status(404).json({ message: 'Mood not found' });
+    }
+    if (activity.user._id.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    await ActivityModel.deleteOne({ _id: req.params.activityId });
+    return res.status(200).json({ message: 'Mood has been deleted!' });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
 
 export { moodsRouter };
