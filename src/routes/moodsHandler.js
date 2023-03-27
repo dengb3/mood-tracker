@@ -64,16 +64,16 @@ moodsRouter.get('/:userName', async (req, res) => {
 moodsRouter.delete('/:activityId', auth, async (req, res, next) => {
   try {
     const mood = await MoodModel.findOne({ _id: req.params.activityId }).populate('user');
-    console.log(mood)
     if (!mood) {
       return res.status(404).json({ message: 'Mood not found' });
     }
-    if (activity.user._id.toString() !== req.user.id) {
+    if (mood.user._id.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    await ActivityModel.deleteOne({ _id: req.params.activityId });
+    await MoodModel.deleteOne({ _id: req.params.activityId });
     return res.status(200).json({ message: 'Mood has been deleted!' });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ error: error.message });
   }
 });
