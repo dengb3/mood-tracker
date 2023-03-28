@@ -4,7 +4,6 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { auth } from '../middleware/auth.js';
-
 import { UserModel } from '../models/users.js';
 export const usersRouter = express.Router();
 
