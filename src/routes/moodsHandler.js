@@ -19,7 +19,6 @@ moodsRouter.post('/:activityId', auth, async (req, res) => {
       activity: activity.activityId, // Add reference to activity ID
       user: req.user._id, // Add reference to user ID from auth middleware
       happy: req.body.happy,
-      easy: req.body.easy,
       concentration: req.body.concentration,
       motivated: req.body.motivated,
       energized: req.body.energized,

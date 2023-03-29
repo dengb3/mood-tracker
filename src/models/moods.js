@@ -5,7 +5,8 @@ import mongoose from 'mongoose';
 
 const moodSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  activityName: { type: String, ref: "Activity.activityName", required: true },
+  activity: { type: mongoose.Schema.Types.ObjectId, ref: "Activity", required: true },
+  activityName: { type: String }, 
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: PostModel }],
   happy: {
     type: Number,

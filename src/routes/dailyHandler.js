@@ -45,7 +45,7 @@ dailyRouter.get('/:userName', auth, async (req, res) => {
         }
       }
     ]).exec();
-    const score = moodSums[0].totalScore;
+    const score = Math.round(moodSums[0].totalScore);
     res.json({ message: `Your average total daily mood scores where ${score}/21` });
   } catch (err) {
     console.log('Error fetching mood analysis', err);
@@ -89,6 +89,7 @@ dailyRouter.get('/:userName/maxmin', auth, async (req, res) => {
 
     for (let i = 0; i < moodStats.length; i++) {
       const activity = moodStats[i]._id;
+      console.log(activity)
       const activityMaxScore = moodStats[i].maxScore;
       const activityMinScore = moodStats[i].minScore;
 
