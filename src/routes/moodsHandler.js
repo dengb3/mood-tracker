@@ -8,17 +8,18 @@ import { PostModel } from '../models/post.js';
 
 const moodsRouter = express.Router();
 
-moodsRouter.post('/:userName/:activityName', auth, async (req, res) => {
+moodsRouter.post('/:activityId', auth, async (req, res) => {
   try {
-    const activity = await ActivityModel.findOne({ activityName: req.params.activityName })
+    const activity = await ActivityModel.findById(req.params.activityId)
+    console.log(activity)
     if (!activity) {
       return res.status(404).json({ message: 'Activity not found' });
     }
     const mood = new MoodModel({
-      activityName: req.params.activityName, // set activityName property to name of activity
-      activity: activity.activityId,
-      user: req.user._id,
+      activity: activity.activityId, // Add reference to activity ID
+      user: req.user._id, // Add reference to user ID from auth middleware
       happy: req.body.happy,
+      easy: req.body.easy,
       concentration: req.body.concentration,
       motivated: req.body.motivated,
       energized: req.body.energized,
@@ -27,8 +28,8 @@ moodsRouter.post('/:userName/:activityName', auth, async (req, res) => {
       refreshed: req.body.refreshed,
     });
     const postOne = await PostModel.create({
-      activity: req.params.activityName, // set activity property to name of activity
-      user: req.user._id,
+      activity: activity.activityId, // Add reference to activity ID from auth middleware
+      user: req.user._id, // Add reference to user ID from auth middleware
     });
     await mood.save();
     res.status(201).json({
@@ -45,7 +46,6 @@ moodsRouter.post('/:userName/:activityName', auth, async (req, res) => {
   }
 });
 
-
 moodsRouter.get('/:userName', async (req, res) => {
   try {
     const user = await UserModel.findOne({ userName: req.params.userName });
@@ -61,16 +61,16 @@ moodsRouter.get('/:userName', async (req, res) => {
   }
 });
 
-moodsRouter.delete('/:activityName', auth, async (req, res, next) => {
+moodsRouter.delete('/:activityId', auth, async (req, res, next) => {
   try {
-    const mood = await MoodModel.findOne({ activityName: req.params.activityName }).populate('user');
+    const mood = await MoodModel.findOne({ _id: req.params.activityId }).populate('user');
     if (!mood) {
       return res.status(404).json({ message: 'Mood not found' });
     }
     if (mood.user._id.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    await MoodModel.deleteOne({ activityName: req.params.activityName });
+    await MoodModel.deleteOne({ _id: req.params.activityId });
     return res.status(200).json({ message: 'Mood has been deleted!' });
   } catch (error) {
     console.log(error)
