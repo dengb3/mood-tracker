@@ -1,6 +1,5 @@
 
 import express from 'express';
-import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { auth } from '../middleware/auth.js';

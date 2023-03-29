@@ -1,10 +1,11 @@
 import { PostModel } from './post.js'
+import { ActivityModel } from './activities.js';
 import { UserModel } from './users.js';
 import mongoose from 'mongoose';
 
 const moodSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  activity: { type: mongoose.Schema.Types.ObjectId, ref: "Activity", required: true },
+  activityName: { type: String, ref: "Activity.activityName", required: true },
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: PostModel }],
   happy: {
     type: Number,
@@ -63,8 +64,9 @@ const moodSchema = new mongoose.Schema({
     required: true
   },
   createdOn: { type: Date, default: Date.now },
-  activityId: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
+  
 });
 
 export const MoodModel = mongoose.model('Mood', moodSchema);
 export const User = mongoose.model('User', UserModel.schema);
+export const Activity = mongoose.model('Activity', ActivityModel.schema);

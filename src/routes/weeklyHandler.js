@@ -1,5 +1,4 @@
 import express from 'express';
-import { connectToDatabase } from '../server.js';
 import { UserModel } from '../models/users.js';
 import { auth } from '../middleware/auth.js';
 import { MoodModel } from '../models/moods.js';
